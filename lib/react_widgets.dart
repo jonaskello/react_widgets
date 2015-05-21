@@ -1,71 +1,41 @@
 library react_widgets;
 
 import 'dart:js';
-import 'package:react/react.dart';
-import 'package:react/react_client.dart' as reactClient;
 
 JsObject _window = new JsObject.fromBrowserObject(context['window']);
-JsObject _reactWidgets = _window['ReactWidgets'];
-JsObject _reactDropdownList = _reactWidgets['DropdownList'];
 JsObject _react = _window['React'];
+JsObject _Object = context['Object'];
+JsObject _reactWidgets = _window['ReactWidgets'];
+JsObject _dropdownList = _reactWidgets['DropdownList'];
+JsObject _combobox = _reactWidgets['Combobox'];
+JsObject _numberPicker = _reactWidgets['NumberPicker'];
+JsObject _multiselect = _reactWidgets['Multiselect'];
 
-reactClient.ReactComponentFactory dropdownList = _createDropdownList;
+JsObject dropdownList(Map props, [dynamic children]) => _proxy(_dropdownList, props, children);
 
-JsObject _createDropdownList(Map props, [dynamic children]) {
+JsObject combobox(Map props, [dynamic children]) => _proxy(_combobox, props, children);
 
-  if (props["data"] != null && props["data"] is List) {
-    props["data"] = new JsArray.from(props["data"]);
-  }
+JsObject numberPicker(Map props, [dynamic children]) => _proxy(_numberPicker, props, children);
 
-  var propsJs = reactClient.newJsMap(props);
+JsObject multiselect(Map props, [dynamic children]) => _proxy(_multiselect, props, children);
 
-  var element = _react.callMethod("createElement", [_reactDropdownList, propsJs, children]);
-  return element;
-
+JsObject _proxy(JsObject element, Map props, [dynamic children]) {
+  var propsJs = _convertProps(props);
+  var instance = _react.callMethod("createElement", [element, propsJs, children]);
+  return instance;
 }
 
-JsObject dropdownList3({List data, String textField, Component valueComponentComponent, dynamic children}) {
-  Props props = new Props();
-  props.add("data", data);
-  props.add("textField", textField);
-  props.add("valueComponentComponent", valueComponentComponent);
-  var propsJs = props.toJsMap();
-  var element = _react.callMethod("createElement", [_reactDropdownList, propsJs, children]);
-  return element;
-}
-
-class Props {
-
-  Map _props = new Map();
-
-  void add(String name, dynamic value) {
-    if(value is List)
-      value = new JsArray.from(value);
-    if (value != null)
-      _props[name] = value;
+JsObject _convertProps(Map map) {
+  var JsMap = new JsObject(_Object);
+  for (var key in map.keys) {
+    if (map[key] is Map) {
+      JsMap[key] = _convertProps(map[key]);
+    } else if (map[key] is List) {
+      JsMap[key] = new JsArray.from(map[key]);
+    }
+    else {
+      JsMap[key] = map[key];
+    }
   }
-
-  JsObject toJsMap() {
-    return reactClient.newJsMap(_props);
-  }
-
+  return JsMap;
 }
-
-
-//class DropdownProps {
-//
-//  List data;
-//  String textField;
-//  Component valueComponentComponent;
-//
-//  DropdownProps({this.data, this.textField, this.valueComponentComponent});
-//
-//  Map toJson() {
-//    return {
-//      "data": data,
-//      "textField": textField,
-//      "valueComponentComponent": valueComponentComponent
-//    };
-//  }
-//
-//}
