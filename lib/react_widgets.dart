@@ -32,12 +32,13 @@ JsObject selectList(Map props, [dynamic children]) => _proxy(_selectList, props,
 
 JsObject calendar(Map props, [dynamic children]) {
 
-  var headerFormat = new DateFormat("MMMM yyyy", Intl.defaultLocale);
-  var format = new DateFormat.yMd("ar");
+//  var headerFormat = new DateFormat("MMMM yyyy", Intl.defaultLocale);
+//  var format = new DateFormat.yMd("ar");
 //  var dateString = format.format(new DateTime.now());
 
   _defaultProp("culture", "en-US", props);
-  _defaultProp("headerFormat", (DateTime date, c) => headerFormat.format(date), props);
+//  _defaultProp("headerFormat", (DateTime date, c) => headerFormat.format(date), props);
+  _defaultProp("headerFormat", (DateTime date, c) => date.toString(), props);
   _defaultProp("footerFormat", (DateTime date, c) => date.toString(), props);
   _defaultProp("dayFormat", (int dayOfTheWeek, c) => dayOfTheWeek.toString(), props);
   _defaultProp("dateFormat", (DateTime date, c) => date.day.toString(), props);
